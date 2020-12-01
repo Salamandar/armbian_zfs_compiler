@@ -13,7 +13,7 @@ get_zfs_sources() {
 
 get_kernel_headers() {
     # Get linux kernel headers
-    apt-get download "linux-headers-${header_pkg_version}-rockchip64"
+    apt-get download "linux-headers-${header_pkg_version}-rk3399"
 }
 
 generate_builder() {

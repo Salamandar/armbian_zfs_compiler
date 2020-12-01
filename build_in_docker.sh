@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 set -eEux
 
-header_pkg_version=legacy
+: "${header_pkg_version:=legacy}"
+kernel_version=$(uname -r)
 header_version=$(uname -r | sed 's/rk3399/rockchip64/')
 
 cd /build_zfs
 dpkg -i linux-headers-${header_pkg_version}-*.deb || true
 sed -i '/+= selinux/s/^/# /' "/usr/src/linux-headers-${header_version}/scripts/Makefile"
 dpkg-reconfigure "linux-headers-${header_pkg_version}-rockchip64"
+
+# Fix kernel version specified in headers
+headers_to_fix=( config/kernel.release generated/utsrelease.h )
+for header in "${headers_to_fix[@]}"; do
+    sed -i -e "s/${header_version}/${kernel_version}/" "/usr/src/linux-headers-${header_version}/include/$header"
+done
 
 # Disable all STACKPROTECT options incompatible with GCC, this means the
 # built kernel module (kmod) will be non-functional. That's OK since

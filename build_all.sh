@@ -26,7 +26,7 @@ build_zfs() {
     part="$1"
     docker run -it --rm \
         -v $(pwd):/build_zfs \
-        -e header_pkg_version="$header_pkg_version"
+        -e header_pkg_version="$header_pkg_version" \
         "zfs_builder/${part}" \
         /build_zfs/build_in_docker.sh
     sudo mv zfs/*.deb "${part}_builder"

@@ -5,9 +5,10 @@ set -eEux
 kernel_version=$(uname -r)
 
 cd /build_zfs
-dpkg -i linux-headers-${header_pkg_version}-rk3399*.deb || true
-sed -i '/+= selinux/s/^/# /' "/usr/src/linux-headers-${kernel_version}/scripts/Makefile"
-dpkg-reconfigure "linux-headers-${header_pkg_version}-rk3399"
+if ! dpkg -i linux-headers-${header_pkg_version}-rk3399*.deb; then
+    sed -i '/+= selinux/s/^/# /' "/usr/src/linux-headers-${kernel_version}/scripts/Makefile"
+    dpkg-reconfigure "linux-headers-${header_pkg_version}-rk3399"
+fi
 
 # Disable all STACKPROTECT options incompatible with GCC, this means the
 # built kernel module (kmod) will be non-functional. That's OK since

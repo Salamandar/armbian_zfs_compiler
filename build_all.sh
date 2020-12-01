@@ -33,6 +33,13 @@ build_zfs() {
     sudo git -C zfs clean -xdf
 }
 
+move_packets_to_output() {
+    mkdir -p output
+    cp module_builder/kmod-zfs-$(uname -r)*.deb output
+    cp utils_builder/lib*.deb output
+    cp utils_builder/*pyzfs*.deb output
+}
+
 parts=(
     module
     utils
@@ -43,3 +50,11 @@ for part in "${parts[@]}"; do
     generate_builder "$part"
     build_zfs "$part"
 done
+
+move_packets_to_output
+
+echo "Finished !"
+echo "You can now install the modules present in the 'output' directory with this command:"
+echo
+echo "    sudo dpkg -i output/*.deb"
+

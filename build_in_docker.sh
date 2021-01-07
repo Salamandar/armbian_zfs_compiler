@@ -3,6 +3,7 @@ set -eEux
 
 # Should be passed by Docker command, but default to currently booted kernel
 : "${kernel_version:=$(uname -r)}"
+: "${config:=all}"
 
 cd /build_zfs
 if ! dpkg -i linux-headers-current-rockchip64*.deb; then
@@ -19,7 +20,7 @@ fi
 
 pushd zfs
     sh autogen.sh
-    ./configure --with-linux="/usr/src/linux-headers-${kernel_version}"
+    ./configure --with-config="$config" --with-linux="/usr/src/linux-headers-${kernel_version}"
     make -s -j"$(nproc)"
     make -s -j"$(nproc)" deb
 popd

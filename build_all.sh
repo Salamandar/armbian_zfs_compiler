@@ -20,7 +20,7 @@ get_kernel_headers() {
 generate_builder() {
     part="$1"
     # Create or update image
-    docker build "${part}_builder" -t "zfs_builder/${part}:latest"
+    docker build "builder_${part}" -t "zfs_builder/${part}:latest"
 }
 
 build_zfs() {
@@ -28,6 +28,7 @@ build_zfs() {
     docker run -it --rm \
         -v "$(pwd)":/build_zfs \
         -e kernel_version="$kernel_version" \
+        -e config="$part" \
         "zfs_builder/${part}" \
         /build_zfs/build_in_docker.sh
     sudo mv zfs/*.deb "${part}_builder"
@@ -36,14 +37,14 @@ build_zfs() {
 
 move_packets_to_output() {
     mkdir -p output
-    cp "module_builder/kmod-zfs-$kernel_version"*.deb output
-    cp utils_builder/lib*.deb output
-    cp utils_builder/*pyzfs*.deb output
+    cp "builder_kernel/kmod-zfs-$kernel_version"*.deb output
+    cp builder_user/lib*.deb output
+    cp builder_user/*pyzfs*.deb output
 }
 
 parts=(
-    module
-    utils
+    kernel
+    user
 )
 get_zfs_sources
 get_kernel_headers

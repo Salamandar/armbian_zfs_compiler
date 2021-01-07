@@ -5,9 +5,9 @@ set -eEux
 kernel_version=$(uname -r)
 
 cd /build_zfs
-if ! dpkg -i linux-headers-${header_pkg_version}-rk3399*.deb; then
+if ! dpkg -i linux-headers-${header_pkg_version}-rockchip64*.deb; then
     sed -i '/+= selinux/s/^/# /' "/usr/src/linux-headers-${kernel_version}/scripts/Makefile"
-    dpkg-reconfigure "linux-headers-${header_pkg_version}-rk3399"
+    dpkg-reconfigure "linux-headers-${header_pkg_version}-rockchip64"
 fi
 
 # Disable all STACKPROTECT options incompatible with GCC, this means the

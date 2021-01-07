@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eEux
-header_pkg_version=legacy
-zfs_version=2.0.0-rc6
+header_pkg_version=current
+zfs_version=2.0.1
 
 get_zfs_sources() {
     # Get ZFS source code
@@ -13,7 +13,7 @@ get_zfs_sources() {
 
 get_kernel_headers() {
     # Get linux kernel headers
-    apt-get download "linux-headers-${header_pkg_version}-rk3399"
+    apt-get download "linux-headers-${header_pkg_version}-rockchip64"
 }
 
 generate_builder() {

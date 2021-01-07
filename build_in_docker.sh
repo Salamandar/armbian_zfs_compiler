@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -eEux
 
-: "${header_pkg_version:=legacy}"
-kernel_version=$(uname -r)
+# Should be passed by Docker command, but default to currently booted kernel
+: "${kernel_version:=$(uname -r)}"
 
 cd /build_zfs
-if ! dpkg -i linux-headers-${header_pkg_version}-rockchip64*.deb; then
+if ! dpkg -i linux-headers-current-rockchip64*.deb; then
     sed -i '/+= selinux/s/^/# /' "/usr/src/linux-headers-${kernel_version}/scripts/Makefile"
-    dpkg-reconfigure "linux-headers-${header_pkg_version}-rockchip64"
+    dpkg-reconfigure "linux-headers-current-rockchip64"
 fi
 
 # Disable all STACKPROTECT options incompatible with GCC, this means the
@@ -20,6 +20,6 @@ fi
 pushd zfs
     sh autogen.sh
     ./configure --with-linux="/usr/src/linux-headers-${kernel_version}"
-    make -s -j$(nproc)
-    make -s -j$(nproc) deb
+    make -s -j"$(nproc)"
+    make -s -j"$(nproc)" deb
 popd

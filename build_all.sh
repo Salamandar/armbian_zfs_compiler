@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -eEux
-header_pkg_version=current
+
 zfs_version=2.0.1
+kernel_version="$(uname -r)"
 
 get_zfs_sources() {
     # Get ZFS source code
@@ -13,7 +14,7 @@ get_zfs_sources() {
 
 get_kernel_headers() {
     # Get linux kernel headers
-    apt-get download "linux-headers-${header_pkg_version}-rockchip64"
+    apt-get download "linux-headers-current-rockchip64"
 }
 
 generate_builder() {
@@ -25,8 +26,8 @@ generate_builder() {
 build_zfs() {
     part="$1"
     docker run -it --rm \
-        -v $(pwd):/build_zfs \
-        -e header_pkg_version="$header_pkg_version" \
+        -v "$(pwd)":/build_zfs \
+        -e kernel_version="$kernel_version" \
         "zfs_builder/${part}" \
         /build_zfs/build_in_docker.sh
     sudo mv zfs/*.deb "${part}_builder"
@@ -35,7 +36,7 @@ build_zfs() {
 
 move_packets_to_output() {
     mkdir -p output
-    cp module_builder/kmod-zfs-$(uname -r)*.deb output
+    cp "module_builder/kmod-zfs-$kernel_version"*.deb output
     cp utils_builder/lib*.deb output
     cp utils_builder/*pyzfs*.deb output
 }
@@ -57,4 +58,3 @@ echo "Finished !"
 echo "You can now install the modules present in the 'output' directory with this command:"
 echo
 echo "    sudo dpkg -i output/*.deb"
-

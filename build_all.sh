@@ -31,7 +31,7 @@ build_zfs() {
         -e config="$part" \
         "zfs_builder/${part}" \
         /build_zfs/build_in_docker.sh
-    sudo mv zfs/*.deb "${part}_builder"
+    sudo mv zfs/*.deb "builder_${part}"
     sudo git -C zfs clean -xdf
 }
 
